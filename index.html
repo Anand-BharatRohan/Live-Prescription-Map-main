@@ -88,6 +88,7 @@ body {
   const control = new L.Control.SimpleLocate({
       position: "topleft",
       className: "button-locate",
+      zoomLevel: 18,  // Added zoom level after clicking the locate button
       afterClick: (result) => {
           console.log("afterClick", result);
           if (!result.geolocation) console.log("Geolocation Error");
@@ -117,10 +118,10 @@ body {
               });
           }
       },
-      // afterDeviceMove: (event) => {
-      //     console.log(event);
-      // }
-  }).addTo(map)
+      afterDeviceMove: (event) => {
+          console.log(event);
+      }
+  }).addTo(map);
 
   map.on("locationfound", (event) => console.log(event));
   map.on("locationerror", (event) => console.log(event));
