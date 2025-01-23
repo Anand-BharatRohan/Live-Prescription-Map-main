@@ -11,8 +11,10 @@
 
   <script src="dist/simple-locate/leaflet-simple-locate.js"></script>
   <link rel="stylesheet" href="dist/simple-locate/demo.css" />
-
+  <script src="dist/rotate-map/Rotate.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"/>
+  <!-- Leaflet-Rotate -->
+
 </head>
 
 <style>
@@ -20,8 +22,6 @@ body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    /* width: 100vw; */
-    /* overflow: hidden; */
 }
 
 #map { 
@@ -50,17 +50,36 @@ body, html {
 
 .legend { 
   text-align: left; 
-  line-height: 18px; 
+  line-height: 13px; 
   color: #555; 
 } 
 
 .legend i { 
-  width: 18px; 
-  height: 18px; 
+  width: 10px; 
+  height: 12px; 
   float: left; 
   margin-right: 8px; 
   opacity: 0.7; 
 }
+
+/* .reset-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 1000;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+} */
+
+  .leaflet-control-zoom{
+    position: absolute !important;
+    bottom: 60px !important;
+    right: 10px !important;
+  }
 </style>
 
 <body>
@@ -71,6 +90,12 @@ body, html {
   var mapOptions = {
     center: [28.4070775, 76.9980343],
     zoom: 13,
+    rotate: true,
+    touchRotate: true,
+    rotateControl: {
+      closeOnZeroBearing: false
+    },
+    bearing: 30,
     attributionControl: false,
   }
 
@@ -86,12 +111,13 @@ body, html {
     );
   map.addLayer(googlemap);
 
-  // Add an attribution control
-  var attrOptions = {
-    prefix: 'Live Prescription Map &copy;<a href="https://www.bharatrohan.in/">BharatRohan</a>'
-  };
-  L.control.attribution(attrOptions).addTo(map);
+    // Add zoom controls
+  L.control.zoom({ position: 'bottomright' }).addTo(map);
 
+  // Function to reset map rotation
+  function resetMapRotation() {
+    map.setBearing(0);
+  }
   // Add the simple-locate control
   const control = new L.Control.SimpleLocate({
       position: "topleft",
@@ -146,7 +172,7 @@ body, html {
   const legend = L.control({position: 'bottomleft'});
   legend.onAdd = function (map) {
     const div = L.DomUtil.create('div', 'info legend');
-    const grades = [0, 10, 20, 50, 100, 200, 500, 1000, 2000];
+    const grades = [0, 10, 20, 50, 100, 200, 500];
     const labels = [];
     let from, to;
     for (let i = 0; i < grades.length; i++) {
@@ -158,6 +184,12 @@ body, html {
     return div;
   };
   legend.addTo(map);
+  
+  // Add an attribution control
+  var attrOptions = {
+    prefix: 'Live Prescription Map &copy;<a href="https://www.bharatrohan.in/">BharatRohan</a>',
+  };
+  L.control.attribution(attrOptions).addTo(map);
 
 </script>
 </html>
