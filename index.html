@@ -6,190 +6,338 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Live Prescription Map</title>
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
+  <link rel="stylesheet" href="dist/Sidebar/leaflet-sidebar.css" />
+  <script src="dist/Sidebar/leaflet-sidebar.js"></script>
   <script src="dist/simple-locate/leaflet-simple-locate.js"></script>
   <link rel="stylesheet" href="dist/simple-locate/demo.css" />
   <script src="dist/rotate-map/Rotate.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" />
   <!-- Leaflet-Rotate -->
 
 </head>
 
 <style>
-body, html {
+  body,html {
     margin: 0;
     padding: 0;
     height: 100%;
-}
-
-#map { 
-  width: 100%;
-  height: 100vh; 
-}
-.leaflet-container {
-			height: 400px;
-			width: 600px;
-			max-width: 100%;
-			max-height: 100%;
-}
-.info { 
-  padding: 6px 8px; 
-  font: 14px/16px Arial, Helvetica, sans-serif; 
-  background: white; 
-  background: rgba(255,255,255,0.8); 
-  box-shadow: 0 0 15px rgba(0,0,0,0.2); 
-  border-radius: 5px; 
-} 
-
-.info h4 { 
-  margin: 0 0 5px; 
-  color: #777; 
-}
-
-.legend { 
-  text-align: left; 
-  line-height: 13px; 
-  color: #555; 
-} 
-
-.legend i { 
-  width: 10px; 
-  height: 12px; 
-  float: left; 
-  margin-right: 8px; 
-  opacity: 0.7; 
-}
-
-/* .reset-button {
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
-    z-index: 1000;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-} */
-
-  .leaflet-control-zoom{
-    position: absolute !important;
-    bottom: 60px !important;
-    right: 10px !important;
   }
+
+  #map {
+    width: 100%;
+    height: 100vh;
+  }
+
+  .leaflet-container {
+    height: 400px;
+    width: 600px;
+    max-width: 100%;
+    max-height: 100%;
+  }
+
+  .info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    /* background: white; */
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+  }
+
+  .info h4 {
+    margin: 0 0 5px;
+    color: #777;
+  }
+
+  .legend {
+    text-align: left;
+    line-height: 13px;
+    color: #555;
+  }
+
+  .legend i {
+    width: 10px;
+    height: 12px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+  }
+
+  /* .leaflet-control-layers {
+    display: none;
+  } */
+
+  .layer-stack-control {
+    background:  #f8f8f8;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+  } 
+  .layer-stack-control img {
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+  }
+
+  #sidebar {
+    box-shadow: none;
+    height: 300px;
+    border: 0px;
+    top: 10px;
+  }
+
+  .sidebar-content {
+    width: 280px;
+  }
+
+  .sidebar-tabs {
+    height: 80px;
+    background: #f8f8f8;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    cursor: pointer;
+  }
+
+  .sidebar-close {
+    position: absolute;
+    top: 0;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .leaflet-bottom.leaflet-left {
+    margin-bottom: 0px !important;
+  }  
+  .leaflet-control-rotate {
+    /* position: absolute; */
+    bottom: 60px;
+  }
+  .leaflet-control-zoom {
+    position: absolute;
+    bottom: 100px !important;
+    right: 0.5px !important;
+  }
+
 </style>
 
 <body>
-  <div id="map"></div>
-</body>
-    
-<script>
-  var mapOptions = {
-    center: [28.4070775, 76.9980343],
-    zoom: 13,
-    rotate: true,
-    touchRotate: true,
-    rotateControl: {
-      closeOnZeroBearing: false
-    },
-    bearing: 30,
-    attributionControl: false,
-  }
+  <div id="map">
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar collapsed">
+      <!-- Nav tabs -->
+      <div class="sidebar-tabs">
+        <ul role="tablist">
+          <li><a href="#farmer-profile" role="tab"><i class="fa fa-user"></i> Farmer Profile</a></li>
+          <li><a href="#advisory" role="tab"><i class="fa fa-info-circle"></i> Advisory</a></li>
+        </ul>
+      </div>
 
-  // Initialize the map
-  var map = L.map('map', mapOptions).fitWorld();
+      <!-- Tab panes -->
+      <div class="sidebar-content">
+        <div class="sidebar-pane" id="farmer-profile">
+          <h1 class="sidebar-header">
+            Farmer Profile
+            <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+          </h1>
+          <p>This section displays the farmer's profile details.</p>
+          <ul>
+            <li>Name: John Doe</li>
+            <li>Location: Village X</li>
+            <li>Crops: Wheat, Rice</li>
+          </ul>
+        </div>
+        <div class="sidebar-pane" id="advisory">
+          <h1 class="sidebar-header">
+            Advisory
+            <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+          </h1>
+          <p>This section provides recommendations and advisories for farmers.</p>
+          <ul>
+            <li>Weather: Rain expected tomorrow</li>
+            <li>Crop Care: Apply fertilizer in 3 days</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  // Add a tile layer
-  var googlemap = L.tileLayer("https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
-            {
-                minZoom: 2,
-                maxZoom: 22,
-            }
+  <script>
+    var mapOptions = {
+      center: [28.4070775, 76.9980343],
+      zoom: 13,
+      rotate: true,
+      touchRotate: true,
+      rotateControl: {
+        closeOnZeroBearing: false
+      },
+      bearing: 30,
+      attributionControl: false,
+    }
+
+    // Initialize the map
+    var map = L.map('map', mapOptions).fitWorld();
+
+    // Add a tile layer
+    var googlemap = L.tileLayer("https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+      {
+        minZoom: 2,
+        maxZoom: 22,
+      }
     );
-  map.addLayer(googlemap);
+    map.addLayer(googlemap);
+
+    // Load the raster layer (example using GeoTIFF)
+    var surveyLayer = L.tileLayer.wms(
+      "http://localhost:8080/geoserver/LPM_Project/wms", {
+      layers: '	LPM_Project:dlf_2',
+      format: 'image/png',
+      transparent: true,
+      minZoom: 8,
+      maxZoom: 22,
+    });
+
+    var survey1 = L.layerGroup([surveyLayer]);
+    var survey2 = L.layerGroup([]); // Placeholder for future layers
+    var survey3 = L.layerGroup([]);
+
+    // Function to handle layer selection via radio buttons
+    function handleLayerSelection(event) {
+      map.eachLayer(function (layer) {
+        if (layer !== googlemap) map.removeLayer(layer);
+      });
+
+      if (event.target.value === "survey1") {
+        map.addLayer(survey1);
+      } else if (event.target.value === "survey2") {
+        map.addLayer(survey2);
+      } else if (event.target.value === "survey3") {
+        map.addLayer(survey3);
+      }
+    }
+
+    // Add the Layer Stack button with functionality
+    var layerButton = L.control({ position: "topright" });
+
+    layerButton.onAdd = function () {
+      var div = L.DomUtil.create("div", "layer-stack-control");
+      div.innerHTML = `
+        <img src="data/layers.svg" alt="Layer Stack" style="cursor: pointer; width: 40px; height: 40px;">
+        <div id="layer-options" style="display: none; position: fixed; top: 80px; right: 5px; background: rgba(255, 255, 255, 0.8); padding: 10px; box-shadow: 0 0 5px rgba(0,0,0,0.5); border-radius: 5px; z-index: 1000;">
+          <label><input type="radio" name="layer" value="survey1"> Survey 1</label><br>
+          <label><input type="radio" name="layer" value="survey2"> Survey 2</label><br>
+          <label><input type="radio" name="layer" value="survey3"> Survey 3</label>
+        </div>
+      `;
+
+      // Toggle visibility of layer options on click
+      var img = div.querySelector("img");
+      img.addEventListener("click", function () {
+        var options = document.getElementById("layer-options");
+        options.style.display = options.style.display === "block" ? "none" : "block";
+      });
+
+      // Add event listeners to the radio buttons
+      var radios = div.querySelectorAll('input[name="layer"]');
+      radios.forEach(function (radio) {
+        radio.addEventListener("change", handleLayerSelection);
+      });
+
+      return div;
+    };
+
+    layerButton.addTo(map);
+
 
     // Add zoom controls
-  L.control.zoom({ position: 'bottomright' }).addTo(map);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-  // Function to reset map rotation
-  function resetMapRotation() {
-    map.setBearing(0);
-  }
-  // Add the simple-locate control
-  const control = new L.Control.SimpleLocate({
+    // Function to reset map rotation
+    function resetMapRotation() {
+      map.setBearing(0);
+    }
+    // Add the simple-locate control
+    const control = new L.Control.SimpleLocate({
       position: "topleft",
       className: "button-locate",
       zoomLevel: 18,  // Added zoom level after clicking the locate button
       afterClick: (result) => {
-          console.log("afterClick", result);
-          if (!result.geolocation) console.log("Geolocation Error");
-          if (!result.orientation) console.log("Orientation Error");
+        console.log("afterClick", result);
+        if (!result.geolocation) console.log("Geolocation Error");
+        if (!result.orientation) console.log("Orientation Error");
       },
       afterMarkerAdd: () => {
-          console.log("afterMarkerAdded");
-          const elem = document.getElementById("leaflet-simple-locate-icon-spot");
-          if (elem) {
-              elem.addEventListener("click", (event) => {
-                  const latlng = control.getLatLng();
-                  const latlng_str = `geolocation: [${Math.round(latlng.lat * 100000) / 100000}, ${Math.round(latlng.lng * 100000) / 100000}]`;
+        console.log("afterMarkerAdded");
+        const elem = document.getElementById("leaflet-simple-locate-icon-spot");
+        if (elem) {
+          elem.addEventListener("click", (event) => {
+            const latlng = control.getLatLng();
+            const latlng_str = `geolocation: [${Math.round(latlng.lat * 100000) / 100000}, ${Math.round(latlng.lng * 100000) / 100000}]`;
 
-                  const accuracy = control.getAccuracy();
-                  const accuracy_str = `accuracy: ${Math.round(accuracy)} meter`;
+            const accuracy = control.getAccuracy();
+            const accuracy_str = `accuracy: ${Math.round(accuracy)} meter`;
 
-                  L.popup()
-                      .setLatLng(latlng)
-                      .setContent(`<p style="margin: 0.25rem 0 0.25rem 0">${latlng_str}</p><p style="margin: 0.25rem 0 0.25rem 0">${accuracy_str}</p>`)
-                      .openOn(map);
+            L.popup()
+              .setLatLng(latlng)
+              .setContent(`<p style="margin: 0.25rem 0 0.25rem 0">${latlng_str}</p><p style="margin: 0.25rem 0 0.25rem 0">${accuracy_str}</p>`)
+              .openOn(map);
 
-                  event.stopPropagation();
-                  event.preventDefault();
-              });
-          }
+            event.stopPropagation();
+            event.preventDefault();
+          });
+        }
       },
       afterDeviceMove: (event) => {
-          console.log(event);
+        console.log(event);
       }
-  }).addTo(map);
+    }).addTo(map);
 
-  map.on("locationfound", (event) => console.log(event));
-  map.on("locationerror", (event) => console.log(event));
-  map.locate({setView: true, maxZoom: 16});
+    var sidebar = L.control.sidebar('sidebar').addTo(map);
 
-  // Add a legend
-  function getColor(d) {
-    return d > 2000 ? '#d7191c' :
-      d > 1000 ? '#ea643F' :
-      d > 500  ? '#fdae61' :
-      d > 200  ? '#fed791' :
-      d > 100  ? '#ffffc0' :
-      d > 50   ? '#d3ec95' :
-      d > 20   ? '#a6d96a' :
-      d > 10   ? '#60b856' : '#1a9641';
-  }
-  const legend = L.control({position: 'bottomleft'});
-  legend.onAdd = function (map) {
-    const div = L.DomUtil.create('div', 'info legend');
-    const grades = [0, 10, 20, 50, 100, 200, 500];
-    const labels = [];
-    let from, to;
-    for (let i = 0; i < grades.length; i++) {
-      from = grades[i];
-      to = grades[i + 1];
-      labels.push(`<i style="background:${getColor(from + 1)}"></i> ${from}${to ? `&ndash;${to}` : '+'}`);
+    map.on("locationfound", (event) => console.log(event));
+    map.on("locationerror", (event) => console.log(event));
+    map.locate({ setView: true, maxZoom: 16 });
+
+    // Add a legend
+    function getColor(d) {
+      return d > 2000 ? '#d7191c' :
+        d > 1000 ? '#ea643F' :
+          d > 500 ? '#fdae61' :
+            d > 200 ? '#fed791' :
+              d > 100 ? '#ffffc0' :
+                d > 50 ? '#d3ec95' :
+                  d > 20 ? '#a6d96a' :
+                    d > 10 ? '#60b856' : '#1a9641';
     }
-    div.innerHTML = labels.join('<br>');
-    return div;
-  };
-  legend.addTo(map);
-  
-  // Add an attribution control
-  var attrOptions = {
-    prefix: 'Live Prescription Map &copy;<a href="https://www.bharatrohan.in/">BharatRohan</a>',
-  };
-  L.control.attribution(attrOptions).addTo(map);
+    const legend = L.control({ position: 'bottomleft' });
+    legend.onAdd = function (map) {
+      const div = L.DomUtil.create('div', 'info legend');
+      const grades = [0, 10, 20, 50, 100, 200, 500];
+      const labels = [];
+      let from, to;
+      for (let i = 0; i < grades.length; i++) {
+        from = grades[i];
+        to = grades[i + 1];
+        labels.push(`<i style="background:${getColor(from + 1)}"></i> ${from}${to ? `&ndash;${to}` : '+'}`);
+      }
+      div.innerHTML = labels.join('<br>');
+      return div;
+    };
+    legend.addTo(map);
 
-</script>
+    // Add an attribution control
+    var attrOptions = {
+      prefix: 'Live Prescription Map &copy;<a href="https://www.bharatrohan.in/">BharatRohan</a>',
+    };
+    L.control.attribution(attrOptions).addTo(map);
+
+  </script>
+</body>
+
 </html>
